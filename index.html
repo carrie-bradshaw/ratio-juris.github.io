@@ -4,17 +4,26 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Supreme Court Law Review | Supreme Court Blog</title>
+  <link rel="icon" type="image/png" href="images/gavel.png" />
   <style>
     :root {
-      --bg: #d9c4d7;
+      --bg: #e1cfe0;
       --panel: rgba(255, 248, 252, 0.84);
       --panel-strong: #fff9fc;
+      --panel-soft: rgba(255, 249, 252, 0.78);
+      --panel-menu: rgba(255, 245, 249, 0.98);
       --text: #2f2230;
       --muted: #6b5868;
       --accent: #7d4e74;
       --accent-2: #4f6a73;
       --border: rgba(80, 54, 75, 0.16);
+      --border-soft: rgba(125, 78, 116, 0.18);
+      --border-faint: rgba(125, 78, 116, 0.14);
+      --pink-hover: #f8e4ee;
+      --pink-active: #efd3e1;
       --shadow: 0 22px 60px rgba(63, 39, 57, 0.15);
+      --shadow-soft: 0 14px 34px rgba(63, 39, 57, 0.08);
+      --shadow-menu: 0 18px 36px rgba(63, 39, 57, 0.14);
     }
 
     * { box-sizing: border-box; }
@@ -26,7 +35,7 @@
       background:
         radial-gradient(circle at top left, rgba(255,255,255,0.45), transparent 34%),
         radial-gradient(circle at bottom right, rgba(123, 85, 123, 0.18), transparent 30%),
-        linear-gradient(135deg, #dec8df 0%, #d2b8d2 48%, #cdb7ca 100%);
+        linear-gradient(135deg, #eaddec 0%, #e2d1e3 48%, #dac8db 100%);
       min-height: 100vh;
     }
 
@@ -51,7 +60,78 @@
       padding: 28px 0 48px;
     }
 
-    .hero, .toolbar, .card, .post, .stat {
+    .page-menu {
+      position: relative;
+      z-index: 90;
+    }
+
+    .page-menu-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 18px;
+      border-radius: 999px;
+      background: var(--panel-strong);
+      border: 1px solid var(--border-soft);
+      color: var(--text);
+      box-shadow: 0 10px 24px rgba(63, 39, 57, 0.08);
+      transition: background 0.18s ease, transform 0.18s ease;
+    }
+
+    .page-menu-button::after {
+      content: "▾";
+      font-size: 0.82rem;
+      color: var(--accent);
+    }
+
+    .page-menu-panel {
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      min-width: 180px;
+      display: grid;
+      gap: 6px;
+      padding: 10px;
+      background: var(--panel-menu);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow-menu);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-6px);
+      transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s ease;
+      z-index: 100;
+    }
+
+    .page-menu:hover .page-menu-panel {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .page-menu:hover .page-menu-button,
+    .page-menu-panel a:hover,
+    .page-menu-panel button:hover {
+      background: var(--pink-hover);
+    }
+
+    .page-menu-panel a,
+    .page-menu-panel button {
+      display: block;
+      width: 100%;
+      padding: 9px 12px;
+      border-radius: 12px;
+      color: var(--text);
+      text-decoration: none;
+      text-align: left;
+      background: transparent;
+      border: 0;
+      font: inherit;
+      cursor: pointer;
+      transition: background 0.18s ease;
+    }
+
+    .hero, .card, .post, .stat {
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
     }
@@ -64,16 +144,6 @@
       box-shadow: var(--shadow);
       overflow: hidden;
       position: relative;
-    }
-
-    .hero::after {
-      content: "";
-      position: absolute;
-      inset: auto -80px -110px auto;
-      width: 260px;
-      height: 260px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(125, 78, 116, 0.18), transparent 65%);
     }
 
     .eyebrow {
@@ -108,7 +178,7 @@
 
     .stat {
       background: rgba(255,255,255,0.78);
-      border: 1px solid rgba(125, 78, 116, 0.12);
+      border: 1px solid var(--border);
       border-radius: 18px;
       padding: 16px;
     }
@@ -122,28 +192,6 @@
 
     .stat strong {
       font-size: 1.2rem;
-    }
-
-    .toolbar {
-      margin: 18px 0 22px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      align-items: center;
-      justify-content: space-between;
-      background: rgba(255,255,255,0.7);
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      padding: 14px 18px;
-      box-shadow: 0 12px 36px rgba(63, 39, 57, 0.08);
-    }
-
-    .toolbar label {
-      color: var(--muted);
-      font-size: 0.92rem;
-      display: flex;
-      align-items: center;
-      gap: 10px;
     }
 
     select {
@@ -161,6 +209,7 @@
       grid-template-columns: 1.5fr 0.85fr;
       gap: 18px;
       align-items: start;
+      margin-top: 34px;
     }
 
     .feed {
@@ -208,6 +257,12 @@
       color: #433443;
     }
 
+    .post-date {
+      margin: 4px 0 0;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
     .tag-row {
       display: flex;
       flex-wrap: wrap;
@@ -223,13 +278,87 @@
       border-radius: 999px;
     }
 
+    .post-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 12px 0 0;
+    }
+
+    .post-meta span {
+      font-size: 0.77rem;
+      color: var(--muted);
+      background: rgba(255,255,255,0.74);
+      border: 1px solid var(--border-soft);
+      border-radius: 999px;
+      padding: 6px 10px;
+    }
+
+    .filter-card {
+      display: grid;
+      gap: 12px;
+    }
+
+    .filter-card h3 {
+      margin: 0;
+      font-size: 1.02rem;
+    }
+
+    .tag-filter-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag-filter {
+      border: 1px solid var(--border-soft);
+      background: rgba(255,255,255,0.68);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 7px 11px;
+      font: inherit;
+      font-size: 0.84rem;
+      cursor: pointer;
+      transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+    }
+
+    .tag-filter:hover,
+    .tag-filter.is-active {
+      background: var(--pink-hover);
+      border-color: rgba(125, 78, 116, 0.32);
+      color: var(--accent);
+    }
+
+    .tag-filter.is-active {
+      background: var(--pink-active);
+      border-color: rgba(125, 78, 116, 0.32);
+      color: var(--accent);
+    }
+
     .sidebar {
       display: grid;
       gap: 16px;
+      overflow: visible;
     }
 
     .card {
       padding: 20px;
+    }
+
+    .term-card {
+      position: relative;
+      z-index: 220;
+    }
+
+    .term-card .page-menu {
+      z-index: 230;
+    }
+
+    .term-card .page-menu-panel {
+      top: calc(100% + 4px);
+      left: 0;
+      right: auto;
+      min-width: 100%;
     }
 
     .card h3 {
@@ -261,7 +390,7 @@
     }
 
     .footer {
-      margin-top: 18px;
+      margin-top: 42px;
       text-align: center;
       color: rgba(47, 34, 48, 0.7);
       font-size: 0.9rem;
@@ -272,12 +401,8 @@
         grid-template-columns: 1fr;
       }
 
-      .post-header, .toolbar {
+      .post-header {
         align-items: stretch;
-      }
-
-      .toolbar {
-        flex-direction: column;
       }
     }
   </style>
@@ -289,20 +414,13 @@
       <h1>Supreme Court Law Review</h1>
       <p class="lede">
         A corner of the internet for doctrine, dissents, predictions, and quick takes on the Supreme Court.
-        The posts below are tagged by term so readers can focus on the October Term they want to revisit.
+        The posts below are tagged by term so readers can focus on the october term they want to revisit.
       </p>
       <div class="meta-grid">
         <div class="stat"><span>What I write</span><strong>Commentary, predictions, and case notes</strong></div>
         <div class="stat"><span>How I write</span><strong>Clear takes with room for nuance</strong></div>
-        <div class="stat"><span>Current term</span><strong>October Term 2025 only</strong></div>
+        <div class="stat"><span>Current term</span><strong>october term 2025 only</strong></div>
       </div>
-    </section>
-
-    <section class="toolbar">
-      <label for="sessionFilter">Filter posts by term</label>
-      <select id="sessionFilter">
-        <option value="all">All terms</option>
-      </select>
     </section>
 
     <section class="content">
@@ -312,6 +430,20 @@
       </div>
 
       <aside class="sidebar">
+        <article class="card filter-card term-card">
+          <h3>Term Filter</h3>
+          <div class="page-menu">
+            <div id="termMenuButton" class="page-menu-button">terms</div>
+            <div class="page-menu-panel">
+              <a href="index.html" data-term="all">all terms</a>
+              <a href="index.html" data-term="2025">october term 2025</a>
+            </div>
+          </div>
+        </article>
+        <article class="card filter-card">
+          <h3>Tag Filter</h3>
+          <div id="tagFilters" class="tag-filter-list"></div>
+        </article>
         <article class="card">
           <h3>About This Blog</h3>
           <p>
@@ -322,38 +454,69 @@
         <article class="card">
           <h3>Reading List</h3>
           <ul>
-            <li>October Term 2025 commentary and predictions.</li>
-            <li>Filler notes styled like an editorial notebook.</li>
+            <li>October term 2025 placeholder coverage for Talbott v. USA.</li>
+            <li>Room to add fuller case notes as the term develops.</li>
             <li>Term tags so the archive stays organized.</li>
           </ul>
         </article>
       </aside>
     </section>
 
-    <p class="footer">Thistle-toned SCOTUS commentary by Ratio Juris.</p>
+    <p class="footer">This site reflects the views of RATIO JURIS alone, and not those of the Department of War or the Department of the Air Force.</p>
   </main>
 
   <script src="articles.js"></script>
   <script>
     const posts = window.SUPREME_COURT_ARTICLES ?? [];
-
-    const sessionFilter = document.getElementById("sessionFilter");
+    const termMenuButton = document.getElementById("termMenuButton");
+    const termOptions = document.querySelectorAll(".term-card [data-term]");
+    const tagFilters = document.getElementById("tagFilters");
     const postsContainer = document.getElementById("posts");
     const emptyState = document.getElementById("emptyState");
+    const selectedTags = new Set();
+    const availableTags = [
+      "constitutional law",
+      "civil rights",
+      "federal courts",
+      "judicial review",
+      "merits",
+      "oral argument",
+      "predictions",
+      "procedure",
+      "remedies",
+      "scotus",
+      "statutory interpretation",
+      "torts"
+    ];
 
-    const sessions = [...new Set(posts.map((post) => post.session))].sort((a, b) => b.localeCompare(a));
-    sessions.forEach((session) => {
-      const option = document.createElement("option");
-      option.value = session;
-      option.textContent = `October Term ${session}`;
-      sessionFilter.appendChild(option);
+    let selectedTerm = "all";
+
+    availableTags.forEach((tag) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "tag-filter";
+      button.textContent = tag;
+      button.addEventListener("click", () => {
+        if (selectedTags.has(tag)) {
+          selectedTags.delete(tag);
+          button.classList.remove("is-active");
+        } else {
+          selectedTags.add(tag);
+          button.classList.add("is-active");
+        }
+        renderPosts(selectedTerm);
+      });
+      tagFilters.appendChild(button);
     });
 
-    function renderPosts(selectedSession) {
+    function renderPosts(activeTerm) {
       postsContainer.innerHTML = "";
-      const filtered = selectedSession === "all"
+      const byTerm = activeTerm === "all"
         ? posts
-        : posts.filter((post) => post.session === selectedSession);
+        : posts.filter((post) => post.session === activeTerm);
+      const filtered = selectedTags.size
+        ? byTerm.filter((post) => post.tags.some((tag) => selectedTags.has(tag)))
+        : byTerm;
 
       emptyState.style.display = filtered.length ? "none" : "block";
 
@@ -364,8 +527,9 @@
         article.innerHTML = `
           <div class="post-header">
             <h2><a href="${post.file}">${post.title}</a></h2>
-            <span class="session">October Term ${post.session}</span>
+            <span class="session">october term ${post.session}</span>
           </div>
+          <p class="post-date">${post.published}</p>
           <p>${post.excerpt}</p>
           <div class="tag-row">
             ${post.tags.map((tag) => `<span class="tag">${tag}</span>`).join("")}
@@ -374,6 +538,15 @@
         postsContainer.appendChild(article);
       });
     }
+
+    termOptions.forEach((option) => {
+      option.addEventListener("click", (event) => {
+        event.preventDefault();
+        selectedTerm = option.dataset.term;
+        termMenuButton.textContent = selectedTerm === "all" ? "all terms" : `october term ${selectedTerm}`;
+        renderPosts(selectedTerm);
+      });
+    });
 
     document.head.insertAdjacentHTML(
       "beforeend",
@@ -391,10 +564,6 @@
       `
     );
 
-    sessionFilter.addEventListener("change", (event) => {
-      renderPosts(event.target.value);
-    });
-
     const style = document.createElement("style");
     style.textContent = `
       @keyframes fadeUp {
@@ -404,7 +573,8 @@
     `;
     document.head.appendChild(style);
 
-    renderPosts("all");
+    termMenuButton.textContent = "all terms";
+    renderPosts(selectedTerm);
   </script>
 </body>
 </html>
