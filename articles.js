@@ -8,7 +8,7 @@ window.SUPREME_COURT_ARTICLES = [
     status: "Published",
     tags: [
       "civil rights",
-      "scotus"
+      "federal courts"
     ],
     excerpt:
       "A placeholder entry for future coverage of Talbott v. USA, with the full post to come once the article is ready.",
